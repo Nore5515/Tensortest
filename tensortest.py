@@ -70,9 +70,65 @@ model = tf.keras.models.Sequential([
 #model = tf.keras.Sequential()
 
 # Okay! This uh...creates tuple of integers.
-# Specifically, that it will be an inpu t
-x = tf.keras.Input(shape=(32,))
+# Specifically, this creates x as a placeholder tensor/array.
+#x = tf.keras.Input(shape=(32,))
+x = tf.keras.Input(shape=(5,2))
+data = [[1,2],[3,4],[5,6],[7,8],[9,10]]
+print (data)
+#tensor = ''.join(map(str, data))
+#x.tensor = int(tensor)
+#xLabels = tf.constant([1,2,3,4,5])
+
+# This, I believe, creates a Dense layer using x as it's inputs!
+# 16 is the "dimensionality of the output space"
+# I'm assuming that just means it has 16 outputs?
+# activation is the "activation" function to use.
+# Otherwise it's just the linear activation function (whatever THAT means)
+# Softmax, okay! It normalizes the values. NBD. Although what it has to do with activation, I still don't know.
+# OOOOOH, maybe it uh, normalizes all the outputs!
+# You can also specify the input array "shape" with input_shape=(16,)
 y = tf.keras.layers.Dense(16, activation='softmax')(x)
+#y = tf.keras.Input([[0,1][0,1][0,1][0,1][0,1]])
+
+# You can chain layers like this too!
+z = tf.keras.layers.Dense(16) (y)
+
+# creates a model with X as it's input, and y as it's...labels?
+# honestly not sure. Maybe y is it's output.
+# Pretty sure X is it's input though.
+# Okay just looked it up, Model seems to be a layer organizer.
+# Makes sense, I guess. It also is more of a class that functions are run on.
+# check the tensorflow docs about tf.keras.Model! Lots of deets.
+model = tf.keras.Model(inputs=x, outputs=z)
+#model = tf.keras.models.Sequential([x,y])
+# HAAAALELUJA
+print (model.summary())
+
+# Alright, prepare for some REAL KNOWLEDGE about this next line
+# But first, let's review the whole process of making this thing.
+# 1) We take in our Inputs, and run them through a Linear Activation function.
+# This means that we multiply the weights by the inputs, then add a bias.
+# 2) We softmax the modified inputs, putting them all on a scale from 1 to 0
+# This softmax value is roughly the same as the network's accuracy.
+# 3) We then compare the softmax'd value vector/array/logits/whatever to the actual class of the inputs
+# We do something called Cross Entropy, comparing the two and getting, roughly, how far off we were.
+# 4) Tada! We now have accuracy and loss!
+# Alright, that's fine and dandy, but what does this have to do with Compile?
+# Wheelllllllp, I'll tell ya.
+# Compile needs, at minimum, an Optimizer and a Loss...thing.
+# Not sure what a "loss" is, but apparently it can be the name of an "objective function", an ACTUAL objective function or a Loss instance.
+# The optimizer has some nice default, so we'll just be using that.
+# Oooooor not! So we'll need to make an optimizer! Adam seems nice.
+# Which means we need to get a loss function! Or loss objective function. Whatever.
+# BinaryCrossentropy sounds...good? I think?
+loss = tf.keras.losses.BinaryCrossentropy()
+optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+model.compile(optimizer, loss)
+# holy crap I can't believe compile actually worked.
+# Well, onto to the next stage, I guess
+#model.fit(x, xLabels, epochs=5)
+
+#print (model.summary())
 
 
 print ("Hello World!")
