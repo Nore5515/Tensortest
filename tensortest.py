@@ -88,7 +88,7 @@ plt.grid(False)
 # Typically, for images, it's [Images, Colors(RGB), Height, Width]
 # Traditionally, the first value is usually the batch, or the amount there is
 # That's why you see "None" in front of all that stuff!
-x = tf.keras.Input(shape=(32,32,3))
+x = tf.keras.Input(shape=(32,32,3), batch_size=1)
 data = [[1,2],[3,4],[5,6],[7,8],[9,10]]
 print (data)
 
@@ -107,11 +107,11 @@ print ("--------------")
 # Softmax, okay! It normalizes the values. NBD. Although what it has to do with activation, I still don't know.
 # OOOOOH, maybe it uh, normalizes all the outputs!
 # You can also specify the input array "shape" with input_shape=(16,)
-y = tf.keras.layers.Dense(10, input_shape = (5,))(x)
+y = tf.keras.layers.Dense(3, input_shape = (32,32,3))(x)
 #y = tf.keras.Input([[0,1][0,1][0,1][0,1][0,1]])
 
 # You can chain layers like this too!
-z = tf.keras.layers.Dense(10) (y)
+#z = tf.keras.layers.Dense((32,32,3), input_shape = (32,32,3)) (y)
 
 # creates a model with X as it's input, and y as it's...labels?
 # honestly not sure. Maybe y is it's output.
@@ -119,7 +119,7 @@ z = tf.keras.layers.Dense(10) (y)
 # Okay just looked it up, Model seems to be a layer organizer.
 # Makes sense, I guess. It also is more of a class that functions are run on.
 # check the tensorflow docs about tf.keras.Model! Lots of deets.
-model = tf.keras.Model(inputs=x, outputs=z)
+model = tf.keras.Model(inputs=x, outputs=y)
 #model = tf.keras.models.Sequential([x,y])
 # HAAAALELUJA
 print (model.summary())
@@ -141,22 +141,29 @@ print (model.summary())
 # Oooooor not! So we'll need to make an optimizer! Adam seems nice.
 # Which means we need to get a loss function! Or loss objective function. Whatever.
 # BinaryCrossentropy sounds...good? I think?
+
 loss = tf.keras.losses.BinaryCrossentropy()
+#loss = tf.losses.Loss()
+#optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
 optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
 model.compile(optimizer, loss)
+
 # holy crap I can't believe compile actually worked.
 # Well, onto to the next stage, I guess
 # Annnd Fit doesn't work. go figure.
 
-testArray = np.array([])
+testArray = np.random.rand(1, 32, 32, 3)
+#testArray = np.array([100])
 
 print ("==============\nINPUT SHAPE: ")
 print (input_image.shape)
 print ("X INPUT SHAPE: ")
 print (x.shape)
+print ("TEST ARRAY SHAPE: ")
+print (testArray.shape)
 #print ("")
 
-model.fit(input_image, epochs=5)
+model.fit(input_image, testArray, epochs=200)
 
 #print (model.summary())
 
