@@ -111,7 +111,7 @@ y = tf.keras.layers.Dense(3, input_shape = (32,32,3))(x)
 #y = tf.keras.Input([[0,1][0,1][0,1][0,1][0,1]])
 
 # You can chain layers like this too!
-#z = tf.keras.layers.Dense((32,32,3), input_shape = (32,32,3)) (y)
+z = tf.keras.layers.Dense(3, input_shape = (32,32,3)) (y)
 
 # creates a model with X as it's input, and y as it's...labels?
 # honestly not sure. Maybe y is it's output.
@@ -119,7 +119,7 @@ y = tf.keras.layers.Dense(3, input_shape = (32,32,3))(x)
 # Okay just looked it up, Model seems to be a layer organizer.
 # Makes sense, I guess. It also is more of a class that functions are run on.
 # check the tensorflow docs about tf.keras.Model! Lots of deets.
-model = tf.keras.Model(inputs=x, outputs=y)
+model = tf.keras.Model(inputs=x, outputs=z)
 #model = tf.keras.models.Sequential([x,y])
 # HAAAALELUJA
 print (model.summary())
@@ -163,7 +163,41 @@ print ("TEST ARRAY SHAPE: ")
 print (testArray.shape)
 #print ("")
 
+# runs it thorugh input_image with the labels testArray
+# does so 200 times, trying to teach it
 model.fit(input_image, testArray, epochs=200)
+
+print ("NOW TESTING IT...")
+
+# tests it!
+#model.evaluate(input_image, testArray)
+
+# I stole this from online bc i don't wanna import anything else
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
+
+
+
+# Now, compare what it THINKs the output should be, to the actual outputs
+# It will display the actual output, then the predicted output.
+print ("\nUNEDITED PREDICTION\n")
+print (model.predict(input_image)[0])
+print ("\nSOFTMAXXED PREDICTION\n")
+print (softmax(model.predict(input_image)[0]))
+
+
+
+plt.imshow(testArray[0])
+#plt.show()
+
+plt.imshow(
+    softmax(model.predict(input_image)[0])
+)
+plt.show()
+
+
 
 #print (model.summary())
 
