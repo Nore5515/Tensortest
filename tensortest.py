@@ -17,6 +17,7 @@ mnist = tf.keras.datasets.mnist
 # confirm; they are hand drawn numbers, with y as labels
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
+#print (y_train)
 
 # print(len(x_train))
 # print(len(y_train))
@@ -58,8 +59,8 @@ model = tf.keras.models.Sequential([
 
 # Creates a random NumPY Tensor with 1 image of 32x32 pixels with 3 colors
 # If you try to replace the 3 with anything but 3, it'll error! no duh!
-input_image = np.random.rand(1, 32, 32, 3)
-print("RANDOM NUMPY TENSOR")
+input_image = np.random.rand(2, 32, 32, 3)
+#print("RANDOM NUMPY TENSOR")
 #print (input_image)
 
 
@@ -88,13 +89,11 @@ plt.grid(False)
 # Typically, for images, it's [Images, Colors(RGB), Height, Width]
 # Traditionally, the first value is usually the batch, or the amount there is
 # That's why you see "None" in front of all that stuff!
-x = tf.keras.Input(shape=(32,32,3), batch_size=1)
-data = [[1,2],[3,4],[5,6],[7,8],[9,10]]
-print (data)
+x = tf.keras.Input(shape=(32,32,3), name="Input_Layer")
 
-print ("--------------")
-print (x.shape)
-print ("--------------")
+# print ("--------------")
+# print (x.shape)
+# print ("--------------")
 #tensor = ''.join(map(str, data))
 #x.tensor = int(tensor)
 #xLabels = tf.constant([1,2,3,4,5])
@@ -107,11 +106,17 @@ print ("--------------")
 # Softmax, okay! It normalizes the values. NBD. Although what it has to do with activation, I still don't know.
 # OOOOOH, maybe it uh, normalizes all the outputs!
 # You can also specify the input array "shape" with input_shape=(16,)
-y = tf.keras.layers.Dense(3, input_shape = (32,32,3))(x)
+# Okay, so the first "#," they got going on is how many nodes you got. EZ.
+y = tf.keras.layers.Dense(22, input_shape = (32,32,3), name="First_Hidden_Layer")(x)
+#y1 = tf.keras.layers.Dense(32, input_shape = (32,32,3), name="Second_Hidden_Layer")(y)
+#y2 = tf.keras.layers.Dense(32, input_shape = (32,32,3), name="Third_Hidden_Layer")(y1)
+#y3 = tf.keras.layers.Dense(32, input_shape = (32,32,3), name="Fourth_Hidden_Layer")(y2)
+
 #y = tf.keras.Input([[0,1][0,1][0,1][0,1][0,1]])
 
 # You can chain layers like this too!
-z = tf.keras.layers.Dense(3, input_shape = (32,32,3)) (y)
+z = tf.keras.layers.Dense(3, name="Output_Layer") (y)
+#z.output_shape = (2,1)
 
 # creates a model with X as it's input, and y as it's...labels?
 # honestly not sure. Maybe y is it's output.
@@ -143,16 +148,37 @@ print (model.summary())
 # BinaryCrossentropy sounds...good? I think?
 
 loss = tf.keras.losses.BinaryCrossentropy()
+#loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+#loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 #loss = tf.losses.Loss()
-#optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+#optimizer = tf.keras.optimizers.Adam(learning_rate=0.1)
 optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
-model.compile(optimizer, loss)
+model.compile(optimizer, loss, metrics=['accuracy'])
 
 # holy crap I can't believe compile actually worked.
 # Well, onto to the next stage, I guess
 # Annnd Fit doesn't work. go figure.
 
-testArray = np.random.rand(1, 32, 32, 3)
+testArray = np.random.rand(2, 32, 32, 3)
+
+# Creates a blue pyarray image!
+"""testArray[1] = np.zeros((1,32,32,3))
+for hmm in testArray:
+    for var in hmm:
+        for index,varvar in enumerate(var):
+            #print (var[index])
+            var[index] = [0, 0, 1]
+            #print (var[index])
+"""
+#plt.imshow(testArray)
+#plt.grid(True)
+#plt.show()
+
+# labelArray = np.array(["Blue", "Not Blue"])
+labelArray = np.array([0,1])
+
+# creates a random image!
+#testArray = np.random.rand(1, 32, 32, 3)
 #testArray = np.array([100])
 
 print ("==============\nINPUT SHAPE: ")
@@ -166,40 +192,40 @@ print (testArray.shape)
 # runs it thorugh input_image with the labels testArray
 # does so 200 times, trying to teach it
 model.fit(input_image, testArray, epochs=200)
+#model.fit(testArray, labelArray, epochs=200)
 
 print ("NOW TESTING IT...")
 
 # tests it!
 #model.evaluate(input_image, testArray)
 
-# I stole this from online bc i don't wanna import anything else
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum()
-
-
 
 # Now, compare what it THINKs the output should be, to the actual outputs
 # It will display the actual output, then the predicted output.
 print ("\nUNEDITED PREDICTION\n")
 print (model.predict(input_image)[0])
-print ("\nSOFTMAXXED PREDICTION\n")
-print (softmax(model.predict(input_image)[0]))
+print ("\nSIGMOIDED PREDICTION\n")
+print (tf.math.sigmoid(model.predict(input_image)[0]))
 
 
 
 plt.imshow(testArray[0])
-#plt.show()
+plt.show()
 
 plt.imshow(
-    softmax(model.predict(input_image)[0])
+    model.predict(input_image)[0]
+)
+
+plt.show()
+
+plt.imshow(
+    tf.math.sigmoid(model.predict(input_image)[0])
 )
 plt.show()
 
 
 
-#print (model.summary())
+print (model.summary())
 
 
 print ("Hello World!")
