@@ -7,13 +7,14 @@ import tensorflow as tf
 
 import matplotlib.pyplot as plt
 
+import numpy as np
 
 mnist = tf.keras.datasets.mnist
 
 # x_train and y_train are a list of 60,000 uh...things.
 # x_test and y_test are a list of 10,000...things.
 # OH! I think they're images! I'll check using the image reader.
-# confirm; they are hand drawn numbers.
+# confirm; they are hand drawn numbers, with y as labels
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 
@@ -44,19 +45,7 @@ x_train, x_test = x_train / 255.0, x_test / 255.0
 # print(len(x_test))
 # print(len(y_test))
 
-# huh?
-# I believe this generates an empty "figure" state
-plt.figure()
-# shows an image? but not really? from a numpy array?
-# Takes in some Numpy array of (M, N, 3)
-# M is all the pixels, N is each indivdual pixel and 3 is the RGB values
-plt.imshow(x_train[0])
-# presents a colorbar besides the image
-plt.colorbar()
-# disables the overlay grid
-plt.grid(False)
-# show the thing!
-#plt.show()
+
 
 """
 model = tf.keras.models.Sequential([
@@ -67,14 +56,44 @@ model = tf.keras.models.Sequential([
 ])
 """
 
+# Creates a random NumPY Tensor with 1 image of 32x32 pixels with 3 colors
+input_image = np.random.rand(1, 32, 32, 5)
+print("RANDOM NUMPY TENSOR")
+print (input_image)
+
+
+
+# huh?
+# I believe this generates an empty "figure" state
+plt.figure()
+# shows an image? but not really? from a numpy array?
+# Takes in some Numpy array of (M, N, 3)
+# M is all the pixels, N is each indivdual pixel and 3 is the RGB values
+plt.imshow(input_image[0])
+# presents a colorbar besides the image
+plt.colorbar()
+# disables the overlay grid
+plt.grid(False)
+# show the thing!
+plt.show()
+
+
 #model = tf.keras.Sequential()
 
 # Okay! This uh...creates tuple of integers.
 # Specifically, this creates x as a placeholder tensor/array.
 #x = tf.keras.Input(shape=(32,))
-x = tf.keras.Input(shape=(5,2))
+# Shape is simple! All it is, is the ranks of the arrays within it!
+# Typically, for images, it's [Images, Colors(RGB), Height, Width]
+# Traditionally, the first value is usually the batch, or the amount there is
+# That's why you see "None" in front of all that stuff!
+x = tf.keras.Input(shape=(1,32,32))
 data = [[1,2],[3,4],[5,6],[7,8],[9,10]]
 print (data)
+
+print ("--------------")
+print (x.shape)
+print ("--------------")
 #tensor = ''.join(map(str, data))
 #x.tensor = int(tensor)
 #xLabels = tf.constant([1,2,3,4,5])
@@ -87,11 +106,11 @@ print (data)
 # Softmax, okay! It normalizes the values. NBD. Although what it has to do with activation, I still don't know.
 # OOOOOH, maybe it uh, normalizes all the outputs!
 # You can also specify the input array "shape" with input_shape=(16,)
-y = tf.keras.layers.Dense(16, activation='softmax')(x)
+y = tf.keras.layers.Dense(10, input_shape = (5,))(x)
 #y = tf.keras.Input([[0,1][0,1][0,1][0,1][0,1]])
 
 # You can chain layers like this too!
-z = tf.keras.layers.Dense(16) (y)
+z = tf.keras.layers.Dense(10) (y)
 
 # creates a model with X as it's input, and y as it's...labels?
 # honestly not sure. Maybe y is it's output.
@@ -126,6 +145,7 @@ optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
 model.compile(optimizer, loss)
 # holy crap I can't believe compile actually worked.
 # Well, onto to the next stage, I guess
+# Annnd Fit doesn't work. go figure.
 #model.fit(x, xLabels, epochs=5)
 
 #print (model.summary())
