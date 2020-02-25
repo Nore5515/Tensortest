@@ -57,25 +57,26 @@ model = tf.keras.models.Sequential([
 """
 
 # Creates a random NumPY Tensor with 1 image of 32x32 pixels with 3 colors
-input_image = np.random.rand(1, 32, 32, 5)
+# If you try to replace the 3 with anything but 3, it'll error! no duh!
+input_image = np.random.rand(1, 32, 32, 3)
 print("RANDOM NUMPY TENSOR")
-print (input_image)
+#print (input_image)
 
 
 
 # huh?
 # I believe this generates an empty "figure" state
 plt.figure()
-# shows an image? but not really? from a numpy array?
-# Takes in some Numpy array of (M, N, 3)
-# M is all the pixels, N is each indivdual pixel and 3 is the RGB values
+# shows an image from a numpy array
+# Takes in some Numpy array of (H, W, 3)
+# H is the height of the image in pixels, W is the width of the pixels and 3 is the RGB values
 plt.imshow(input_image[0])
 # presents a colorbar besides the image
 plt.colorbar()
 # disables the overlay grid
 plt.grid(False)
 # show the thing!
-plt.show()
+# plt.show()
 
 
 #model = tf.keras.Sequential()
@@ -87,7 +88,7 @@ plt.show()
 # Typically, for images, it's [Images, Colors(RGB), Height, Width]
 # Traditionally, the first value is usually the batch, or the amount there is
 # That's why you see "None" in front of all that stuff!
-x = tf.keras.Input(shape=(1,32,32))
+x = tf.keras.Input(shape=(32,32,3))
 data = [[1,2],[3,4],[5,6],[7,8],[9,10]]
 print (data)
 
@@ -146,7 +147,16 @@ model.compile(optimizer, loss)
 # holy crap I can't believe compile actually worked.
 # Well, onto to the next stage, I guess
 # Annnd Fit doesn't work. go figure.
-#model.fit(x, xLabels, epochs=5)
+
+testArray = np.array([])
+
+print ("==============\nINPUT SHAPE: ")
+print (input_image.shape)
+print ("X INPUT SHAPE: ")
+print (x.shape)
+#print ("")
+
+model.fit(input_image, epochs=5)
 
 #print (model.summary())
 
